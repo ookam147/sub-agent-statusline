@@ -48,6 +48,14 @@
       "sessions": 1,
       "memories": 7,
       "prompts": 9
+    },
+    {
+      "id": "f7aa2363",
+      "created_by": "joaquinvesapa",
+      "created_at": "2026-08-14T21:18:34Z",
+      "sessions": 1560,
+      "memories": 3689,
+      "prompts": 3963
     }
   ]
 }
