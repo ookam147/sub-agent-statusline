@@ -197,10 +197,10 @@ Registra contenido para:
 
 - `sidebar_content`;
 - `home_bottom`;
-- `home_prompt`;
-- `session_prompt`.
 
-Los slots de prompt se usan para preservar referencias de foco y compatibilidad con distintas formas de props de OpenCode.
+El plugin no registra slots de prompt. Conserva el foco mediante el editor
+actual del renderer cuando esa capacidad existe, sin competir con plugins que
+registran `home_prompt` o `session_prompt`.
 
 ### 3. Sidebar
 

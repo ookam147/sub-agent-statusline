@@ -4,16 +4,18 @@ The plugin's main interface is a section in the OpenCode sidebar. Its goal is to
 
 ## Visual surfaces
 
-The plugin registers several TUI surfaces:
+The plugin registers two TUI surfaces:
 
 | Surface | Use |
 | --- | --- |
 | `sidebar_content` | Main subagent list. |
 | `home_bottom` | Compact home-screen summary. |
-| `home_prompt` | Prompt wrapper for focus preservation. |
-| `session_prompt` | Session prompt wrapper. |
 
-Users mainly interact with `sidebar_content` and `home_bottom`.
+The plugin deliberately does not register `home_prompt` or `session_prompt`.
+This leaves the host prompt available to quota/status plugins that need to own
+it and prevents multiple prompt renderers from creating duplicate inputs.
+Keyboard focus restoration uses the renderer's current editor when that API is
+available and safely becomes a no-op on older runtimes.
 
 ## Subagent sidebar
 

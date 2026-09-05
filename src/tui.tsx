@@ -2,7 +2,7 @@ import type {
   TuiPlugin,
   TuiPluginApi,
   TuiPluginModule,
-  TuiPromptRef,
+  TuiSlotPlugin,
   TuiSlotContext,
   TuiThemeCurrent,
 } from "@opencode-ai/plugin/tui";
@@ -59,6 +59,7 @@ import {
   type SessionMessageSummary,
 } from "./reconcile.js";
 import {
+  createPromptFocusController,
   focusPromptWithDeferredRetry,
   resolveSidebarReturnFocusAction,
   resolveSiblingSidebarRefocus,
@@ -305,29 +306,19 @@ export function preservedSidebarScrollTop(input: {
   return top > 0 && input.scrollTop !== top ? top : undefined;
 }
 
-type SidebarContentContext = TuiSlotContext & { session_id?: string };
 type HomeBottomContext = TuiSlotContext;
-type PromptRefProp =
-  | ((ref: TuiPromptRef | undefined) => void)
-  | { current?: TuiPromptRef | undefined }
-  | undefined;
-type HomePromptProps = {
-  workspaceID?: string;
-  workspace_id?: string;
-  ref?: PromptRefProp;
-  [key: string]: unknown;
-};
-type SessionPromptProps = {
-  sessionID?: string;
-  session_id?: string;
-  right?: unknown;
-  visible?: boolean;
-  disabled?: boolean;
-  onSubmit?: () => void;
-  on_submit?: () => void;
-  ref?: PromptRefProp;
-  [key: string]: unknown;
-};
+
+type SubagentSlotContributions = Pick<
+  TuiSlotPlugin["slots"],
+  "sidebar_content" | "home_bottom"
+>;
+
+export function registerSubagentSlots(
+  api: Pick<TuiPluginApi, "slots">,
+  slots: SubagentSlotContributions,
+): string {
+  return api.slots.register({ order: 90, slots });
+}
 
 interface RehydratedTokenCacheEntry {
   attempts: number;
@@ -2550,7 +2541,16 @@ function initializeTui(api: TuiPluginApi, disposeRoot: () => void): void {
   let previousRouteSessionID: string | undefined;
   let pendingSidebarRefocus: PendingSidebarRefocus | undefined;
   let pendingRefocusConsumed = false;
-  let activePromptRef: TuiPromptRef | undefined;
+
+  const promptFocus = createPromptFocusController(api.renderer, () => {
+    const routeName = api.route.current.name;
+    const mode = api.mode?.current?.();
+    return (
+      (mode === undefined || mode === "base") &&
+      (routeName === "home" || routeName === "session") &&
+      !isAnySidebarSubagentListFocused()
+    );
+  });
 
   const consumePendingSidebarRefocus = ():
     | PendingSidebarRefocus
@@ -2560,27 +2560,8 @@ function initializeTui(api: TuiPluginApi, disposeRoot: () => void): void {
     return pendingSidebarRefocus;
   };
 
-  const setActivePromptRef = (ref: TuiPromptRef | undefined): void => {
-    activePromptRef = ref;
-  };
-
-  const composePromptRef = (slotRef: PromptRefProp) => {
-    return (ref: TuiPromptRef | undefined): void => {
-      setActivePromptRef(ref);
-      if (typeof slotRef === "function") {
-        slotRef(ref);
-      } else if (slotRef && "current" in slotRef) {
-        slotRef.current = ref;
-      }
-    };
-  };
-
   const focusActivePrompt = (): void => {
-    focusPromptWithDeferredRetry(() => {
-      if (!activePromptRef) return false;
-      activePromptRef.focus();
-      return true;
-    });
+    focusPromptWithDeferredRetry(promptFocus.tryFocus);
   };
 
   const rememberSidebarChildNavigation = (
@@ -2622,6 +2603,7 @@ function initializeTui(api: TuiPluginApi, disposeRoot: () => void): void {
       return;
     }
 
+    promptFocus.rememberCurrent();
     setSubagentsSectionEnabled(true);
     setSubagentsExpanded(true);
     api.kv.set(SUBAGENTS_SECTION_ENABLED_KV_KEY, true);
@@ -3095,88 +3077,56 @@ function initializeTui(api: TuiPluginApi, disposeRoot: () => void): void {
     }
     hydrateRetryTimeouts.clear();
     commandDispose();
+    promptFocus.dispose();
     for (const dispose of disposers) {
       dispose();
     }
     disposeRoot();
   });
 
-  api.slots.register({
-    order: 90,
-    slots: {
-      sidebar_content(ctx: SidebarContentContext) {
-        const routeSessionID = resolveRouteSessionID(api);
-        const sessionID = ctx.session_id ?? routeSessionID ?? "";
-        debugLog({
-          kind: "slot.sidebar_content",
-          ctxSessionID: ctx.session_id,
-          resolvedSessionID: sessionID,
-          route: api.route.current,
-          childCount: Object.keys(state().children).length,
-        });
-        const restoreFromChild = (() => {
-          const pending = consumePendingSidebarRefocus();
-          if (pending?.parentSessionID !== sessionID) return undefined;
-          return {
-            childRowID: pending.childRowID,
-            showCompletedHistory: pending.showCompletedHistory ?? false,
-          };
-        })();
-        return (
-          <Show when={subagentsSectionEnabled()}>
-            <SidebarSubagents
-              api={api}
-              sessionID={sessionID}
-              state={state}
-              nowMs={nowMs}
-              expanded={subagentsExpanded}
-              onToggleExpanded={() =>
-                setSubagentsExpandedPreference(!subagentsExpanded())
-              }
-              onSetExpanded={setSubagentsExpandedSilently}
-              onReturnFocus={focusActivePrompt}
-              onToggleListFocus={toggleSidebarListFocus}
-              onNavigateToChild={rememberSidebarChildNavigation}
-              sidebarWidth={() => resolveSidebarWidth(ctx)}
-              theme={ctx.theme.current}
-              restoreFromChild={restoreFromChild}
-            />
-          </Show>
-        );
-      },
-      home_bottom(ctx: HomeBottomContext) {
-        return <HomeBottomStatus state={state} theme={ctx.theme.current} />;
-      },
-      home_prompt(_ctx: TuiSlotContext, props: HomePromptProps) {
-        const promptProps = {
-          ...props,
-          ...(props.workspaceID === undefined &&
-          props.workspace_id !== undefined
-            ? { workspaceID: props.workspace_id }
-            : {}),
-          ref: composePromptRef(props.ref),
+  registerSubagentSlots(api, {
+    sidebar_content(ctx, props) {
+      const routeSessionID = resolveRouteSessionID(api);
+      const sessionID = props.session_id ?? routeSessionID ?? "";
+      debugLog({
+        kind: "slot.sidebar_content",
+        ctxSessionID: props.session_id,
+        resolvedSessionID: sessionID,
+        route: api.route.current,
+        childCount: Object.keys(state().children).length,
+      });
+      const restoreFromChild = (() => {
+        const pending = consumePendingSidebarRefocus();
+        if (pending?.parentSessionID !== sessionID) return undefined;
+        return {
+          childRowID: pending.childRowID,
+          showCompletedHistory: pending.showCompletedHistory ?? false,
         };
-        return <api.ui.Prompt {...promptProps} />;
-      },
-      session_prompt(_ctx: TuiSlotContext, props: SessionPromptProps) {
-        const sessionID = props.sessionID ?? props.session_id;
-        const promptProps = {
-          ...props,
-          ...(props.sessionID === undefined && props.session_id !== undefined
-            ? { sessionID: props.session_id }
-            : {}),
-          ...(props.onSubmit === undefined && props.on_submit !== undefined
-            ? { onSubmit: props.on_submit }
-            : {}),
-          right:
-            props.right ??
-            (sessionID ? (
-              <api.ui.Slot name="session_prompt_right" session_id={sessionID} />
-            ) : undefined),
-          ref: composePromptRef(props.ref),
-        };
-        return <api.ui.Prompt {...promptProps} />;
-      },
+      })();
+      return (
+        <Show when={subagentsSectionEnabled()}>
+          <SidebarSubagents
+            api={api}
+            sessionID={sessionID}
+            state={state}
+            nowMs={nowMs}
+            expanded={subagentsExpanded}
+            onToggleExpanded={() =>
+              setSubagentsExpandedPreference(!subagentsExpanded())
+            }
+            onSetExpanded={setSubagentsExpandedSilently}
+            onReturnFocus={focusActivePrompt}
+            onToggleListFocus={toggleSidebarListFocus}
+            onNavigateToChild={rememberSidebarChildNavigation}
+            sidebarWidth={() => resolveSidebarWidth(ctx)}
+            theme={ctx.theme.current}
+            restoreFromChild={restoreFromChild}
+          />
+        </Show>
+      );
+    },
+    home_bottom(ctx: HomeBottomContext) {
+      return <HomeBottomStatus state={state} theme={ctx.theme.current} />;
     },
   });
 }

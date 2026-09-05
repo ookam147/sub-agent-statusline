@@ -4,16 +4,17 @@ La interfaz principal del plugin es una sección en la sidebar de OpenCode. Su o
 
 ## Superficies visuales
 
-El plugin registra varias superficies TUI:
+El plugin registra dos superficies TUI:
 
 | Superficie        | Uso                                        |
 | ----------------- | ------------------------------------------ |
 | `sidebar_content` | Lista principal de subagentes.             |
 | `home_bottom`     | Resumen compacto en la pantalla de inicio. |
-| `home_prompt`     | Wrapper del prompt para conservar foco.    |
-| `session_prompt`  | Wrapper del prompt dentro de sesiones.     |
 
-La parte visible para usuarios está principalmente en `sidebar_content` y `home_bottom`.
+El plugin no registra `home_prompt` ni `session_prompt`. Así deja el prompt del
+host disponible para plugins de cuota/estado y evita que varios renderers creen
+inputs duplicados. La restauración del foco usa el editor actual del renderer
+cuando esa API está disponible y se degrada de forma segura en runtimes antiguos.
 
 ## Sidebar de subagentes
 

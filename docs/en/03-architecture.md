@@ -183,7 +183,7 @@ That is why there can be more children in state than visible rows in the UI.
 
 `src/tui.tsx` is the largest module because it integrates several OpenCode runtime concerns.
 
-It handles initialization, visual slots, the sidebar, hydration, reconciliation, token/context best-effort loading, navigation, prompt focus preservation, and lifecycle cleanup.
+It handles initialization, visual slots, the sidebar, hydration, reconciliation, token/context best-effort loading, navigation, renderer-based prompt focus restoration, and lifecycle cleanup. It does not own the host's `home_prompt` or `session_prompt` slots.
 
 The sidebar shows subagents related to the current session only. Home summary and text/status-file rendering remain global across sessions. Rows are navigable only when a real `ses_*` target is known.
 

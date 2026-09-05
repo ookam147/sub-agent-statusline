@@ -10,6 +10,7 @@ import {
   hydratePreviousSubagents,
   preservedSidebarAnchorScrollTop,
   preservedSidebarScrollTop,
+  registerSubagentSlots,
   resolveSidebarSubagentSnapshot,
   probeRunningEvidence,
   resolveTuiSubagentSnapshot,
@@ -18,6 +19,7 @@ import {
 } from "./tui.js";
 import { textColumns } from "./text-width.js";
 import {
+  createPromptFocusController,
   focusPromptWithDeferredRetry,
   resolveSidebarReturnFocusAction,
   resolveSiblingSidebarRefocus,
@@ -1746,5 +1748,109 @@ describe("focusPromptWithDeferredRetry", () => {
     expect(queue).toHaveLength(1);
     queue.shift()?.();
     expect(focus).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe("createPromptFocusController", () => {
+  it("tracks the host editor and restores focus without a prompt slot", () => {
+    const first = { focus: vi.fn(), isDestroyed: false };
+    const second = { focus: vi.fn(), isDestroyed: false };
+    let focusedEditor: unknown = first;
+    let focusedEditorListener: ((current: unknown) => void) | undefined;
+    const renderer = {
+      get currentFocusedEditor() {
+        return focusedEditor;
+      },
+      on: vi.fn((event: string, listener: (current: unknown) => void) => {
+        if (event === "focused_editor") focusedEditorListener = listener;
+      }),
+      off: vi.fn(),
+    };
+
+    const controller = createPromptFocusController(renderer);
+    focusedEditor = second;
+    focusedEditorListener?.(second);
+
+    expect(controller.tryFocus()).toBe(true);
+    expect(first.focus).not.toHaveBeenCalled();
+    expect(second.focus).toHaveBeenCalledOnce();
+
+    controller.dispose();
+    expect(renderer.off).toHaveBeenCalledWith(
+      "focused_editor",
+      focusedEditorListener,
+    );
+    expect(controller.tryFocus()).toBe(false);
+  });
+
+  it("ignores destroyed editors and safely degrades without a target", () => {
+    const renderer = {
+      currentFocusedEditor: {
+        focus: vi.fn(),
+        isDestroyed: true,
+      },
+    };
+    const controller = createPromptFocusController(renderer);
+
+    expect(controller.rememberCurrent()).toBe(false);
+    expect(controller.tryFocus()).toBe(false);
+  });
+
+  it("supports older renderers through an explicit renderable snapshot", () => {
+    const target = { focus: vi.fn() };
+    const controller = createPromptFocusController({
+      currentFocusedRenderable: target,
+    });
+
+    expect(controller.tryFocus()).toBe(true);
+    expect(target.focus).toHaveBeenCalledOnce();
+  });
+
+  it("does not replace the remembered prompt while capture is disabled", () => {
+    const prompt = { focus: vi.fn() };
+    const sidebar = { focus: vi.fn() };
+    let allowCapture = true;
+    let focusedEditor: unknown = prompt;
+    const controller = createPromptFocusController(
+      {
+        get currentFocusedEditor() {
+          return focusedEditor;
+        },
+      },
+      () => allowCapture,
+    );
+
+    allowCapture = false;
+    focusedEditor = sidebar;
+    expect(controller.rememberCurrent()).toBe(false);
+    expect(controller.tryFocus()).toBe(true);
+    expect(prompt.focus).toHaveBeenCalledOnce();
+    expect(sidebar.focus).not.toHaveBeenCalled();
+  });
+});
+
+describe("registerSubagentSlots", () => {
+  it("registers status surfaces without taking ownership of host prompts", () => {
+    const register = vi.fn(() => "subagent-statusline.tui");
+    const sidebarContent = vi.fn(() => null);
+    const homeBottom = vi.fn(() => null);
+
+    registerSubagentSlots(
+      { slots: { register } } as unknown as Pick<TuiPluginApi, "slots">,
+      {
+        sidebar_content: sidebarContent,
+        home_bottom: homeBottom,
+      },
+    );
+
+    expect(register).toHaveBeenCalledOnce();
+    const registration = register.mock.calls[0]?.[0];
+    expect(registration?.order).toBe(90);
+    expect(Object.keys(registration?.slots ?? {}).sort()).toEqual([
+      "home_bottom",
+      "sidebar_content",
+    ]);
+    expect(registration?.slots).not.toHaveProperty("home_prompt");
+    expect(registration?.slots).not.toHaveProperty("session_prompt");
   });
 });
