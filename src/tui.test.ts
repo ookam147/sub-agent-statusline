@@ -171,6 +171,28 @@ describe("TUI subagent snapshots", () => {
     ).toBe("fallback-model · fast");
   });
 
+  it("keeps more than five visible subagents available to the scrollbox", () => {
+    const nowMs = Date.parse("2026-04-30T10:20:00.000Z");
+    const running = Array.from({ length: 8 }, (_, index) =>
+      child({
+        id: `ses_running_${index}`,
+        title: `Running child ${index}`,
+        targetSessionID: `ses_running_${index}`,
+        messageID: `msg_running_${index}`,
+      }),
+    );
+
+    const snapshot = resolveSidebarSubagentSnapshot({
+      state: stateWith(running),
+      sessionID: "ses_parent",
+      nowMs,
+    });
+
+    expect(snapshot.visibleChildren.map((item) => item.id)).toEqual(
+      running.map((item) => item.id),
+    );
+  });
+
   it("preserves sidebar scroll with the visible row anchor first", () => {
     expect(
       preservedSidebarAnchorScrollTop({

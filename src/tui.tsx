@@ -1849,12 +1849,16 @@ function SidebarSubagents(props: {
       <AggregateBar />
 
       <Show when={props.expanded()}>
+        {/* OpenCode already scrolls the whole sidebar. Clip this nested
+            scrollbox so its scrollbar cannot paint over sibling slots. */}
         <scrollbox
           ref={(element) => {
             scrollbox = element;
             restorePreservedScroll();
           }}
           height={listHeight()}
+          flexShrink={0}
+          overflow="hidden"
           scrollY
           viewportCulling={false}
         >
