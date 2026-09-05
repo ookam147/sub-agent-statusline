@@ -25,9 +25,9 @@ Stable publication is explicit and tag-gated. Merging ordinary changes to `main`
 
 The stale-tag policy is intentionally strict: the tag target must equal `origin/main` when the release workflow starts. If `main` advances, create a new tag only after CI succeeds for the new candidate; never retarget the old tag.
 
-## One-Time Reconciliation
+## Scoped Release Line
 
-The repository currently has historical drift: `package.json` reports `0.7.0`, while the latest stable tag and npm `latest` are `1.3.0`. The release skill and workflow fail closed rather than choosing a version silently. Reconcile this in a reviewed release-preparation PR before the first release under this architecture.
+The `@ookam147/opencode-subagent-statusline` release line starts at `1.3.1`, based on the original package's `1.3.0` release plus compatibility fixes maintained in this fork. Future releases must keep `package.json`, stable tags, and npm aligned.
 
 ## Recovery
 

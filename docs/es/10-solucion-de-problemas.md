@@ -1,6 +1,6 @@
 # Solución de problemas
 
-Esta guía junta problemas comunes al instalar, usar o desarrollar `opencode-subagent-statusline`.
+Esta guía junta problemas comunes al instalar, usar o desarrollar `@ookam147/opencode-subagent-statusline`.
 
 La estrategia general:
 
@@ -21,7 +21,7 @@ Configuración mínima:
 ```json
 {
   "$schema": "https://opencode.ai/tui.json",
-  "plugin": ["opencode-subagent-statusline"]
+  "plugin": ["@ookam147/opencode-subagent-statusline"]
 }
 ```
 

@@ -1,6 +1,6 @@
 # Desarrollo y testing
 
-Esta guía explica cómo preparar el proyecto localmente, qué comandos usar y cómo pensar los tests de `opencode-subagent-statusline`.
+Esta guía explica cómo preparar el proyecto localmente, qué comandos usar y cómo pensar los tests de `@ookam147/opencode-subagent-statusline`.
 
 La regla práctica:
 
@@ -61,9 +61,9 @@ El build usa `tsup.config.ts` y genera dos salidas principales:
 El paquete publica estos entrypoints:
 
 ```txt
-opencode-subagent-statusline
-opencode-subagent-statusline/tui
-opencode-subagent-statusline/runtime
+@ookam147/opencode-subagent-statusline
+@ookam147/opencode-subagent-statusline/tui
+@ookam147/opencode-subagent-statusline/runtime
 ```
 
 ## TypeScript

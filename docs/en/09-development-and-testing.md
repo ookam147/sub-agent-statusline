@@ -1,6 +1,6 @@
 # Development and testing
 
-This guide explains how to set up the project locally, which commands to run, and how to think about tests for `opencode-subagent-statusline`.
+This guide explains how to set up the project locally, which commands to run, and how to think about tests for `@ookam147/opencode-subagent-statusline`.
 
 Practical rule:
 
@@ -59,9 +59,9 @@ pnpm pack --dry-run
 Package entrypoints:
 
 ```txt
-opencode-subagent-statusline
-opencode-subagent-statusline/tui
-opencode-subagent-statusline/runtime
+@ookam147/opencode-subagent-statusline
+@ookam147/opencode-subagent-statusline/tui
+@ookam147/opencode-subagent-statusline/runtime
 ```
 
 ## TypeScript files

@@ -1,13 +1,15 @@
 # Subagent Monitor
 
-![Subagents Monitor banner](https://raw.githubusercontent.com/Joaquinvesapa/sub-agent-statusline/main/assets/subagents_monitor_banner.webp)
+![Subagents Monitor banner](https://raw.githubusercontent.com/ookam147/sub-agent-statusline/main/assets/subagents_monitor_banner.webp)
 
 See delegated work without leaving OpenCode. **Subagent Monitor** is an MIT-licensed OpenCode TUI sidebar plugin that keeps running, completed, and failed subagents visible, with elapsed time and token/context usage when OpenCode provides it.
 
-[![npm version](https://img.shields.io/npm/v/opencode-subagent-statusline?style=flat-square)](https://www.npmjs.com/package/opencode-subagent-statusline)
-[![monthly npm downloads](https://img.shields.io/npm/dm/opencode-subagent-statusline?style=flat-square)](https://www.npmjs.com/package/opencode-subagent-statusline)
-[![GitHub stars](https://img.shields.io/github/stars/Joaquinvesapa/sub-agent-statusline?style=flat-square)](https://github.com/Joaquinvesapa/sub-agent-statusline)
-[![license](https://img.shields.io/github/license/Joaquinvesapa/sub-agent-statusline?style=flat-square)](LICENSE)
+[![npm version](https://img.shields.io/npm/v/%40ookam147%2Fopencode-subagent-statusline?style=flat-square)](https://www.npmjs.com/package/@ookam147/opencode-subagent-statusline)
+[![monthly npm downloads](https://img.shields.io/npm/dm/%40ookam147%2Fopencode-subagent-statusline?style=flat-square)](https://www.npmjs.com/package/@ookam147/opencode-subagent-statusline)
+[![GitHub stars](https://img.shields.io/github/stars/ookam147/sub-agent-statusline?style=flat-square)](https://github.com/ookam147/sub-agent-statusline)
+[![license](https://img.shields.io/github/license/ookam147/sub-agent-statusline?style=flat-square)](LICENSE)
+
+This scoped distribution is maintained by [ookam147](https://github.com/ookam147) and is based on the original [Subagent Monitor project](https://github.com/Joaquinvesapa/sub-agent-statusline).
 
 ## Install
 
@@ -16,7 +18,7 @@ Add the package to your OpenCode TUI configuration:
 ```json
 {
   "$schema": "https://opencode.ai/tui.json",
-  "plugin": ["opencode-subagent-statusline"]
+  "plugin": ["@ookam147/opencode-subagent-statusline"]
 }
 ```
 
@@ -26,7 +28,7 @@ The configuration usually lives at:
 ~/.config/opencode/tui.json
 ```
 
-Restart OpenCode after saving the file. The package is published as `opencode-subagent-statusline` and requires Node `>=22.13`.
+Restart OpenCode after saving the file. The package is published as `@ookam147/opencode-subagent-statusline` and requires Node `>=22.13`.
 
 ## Why Subagent Monitor?
 
@@ -61,11 +63,11 @@ This integration is optional. Subagent Monitor remains an independently installa
 
 Full OpenCode context with demo content in Spanish:
 
-![Subagent Monitor in the full OpenCode view](https://raw.githubusercontent.com/Joaquinvesapa/sub-agent-statusline/main/assets/opencode_full.webp)
+![Subagent Monitor in the full OpenCode view](https://raw.githubusercontent.com/ookam147/sub-agent-statusline/main/assets/opencode_full.webp)
 
 Focused sidebar view:
 
-![Subagent Monitor focused sidebar](https://raw.githubusercontent.com/Joaquinvesapa/sub-agent-statusline/main/assets/opencode_sidebar.webp)
+![Subagent Monitor focused sidebar](https://raw.githubusercontent.com/ookam147/sub-agent-statusline/main/assets/opencode_sidebar.webp)
 
 ## Keyboard navigation
 
@@ -93,8 +95,8 @@ When a child session is opened from the sidebar, returning with OpenCode `Up` (`
 
 For 1.x releases, the stable user-facing contract is:
 
-- npm package name: `opencode-subagent-statusline`;
-- TUI plugin entrypoints: `opencode-subagent-statusline` and `opencode-subagent-statusline/tui`;
+- npm package name: `@ookam147/opencode-subagent-statusline`;
+- TUI plugin entrypoints: `@ookam147/opencode-subagent-statusline` and `@ookam147/opencode-subagent-statusline/tui`;
 - OpenCode `tui.json` plugin configuration;
 - visible sidebar and home/footer behavior;
 - command palette entry, `Alt+B`, and focused-list navigation;
@@ -103,7 +105,7 @@ For 1.x releases, the stable user-facing contract is:
 
 Experimental or internal surfaces may change in 1.x without a SemVer-major bump:
 
-- `opencode-subagent-statusline/runtime`, intended for diagnostics and file-based runtime experiments;
+- `@ookam147/opencode-subagent-statusline/runtime`, intended for diagnostics and file-based runtime experiments;
 - diagnostic environment variables;
 - exact `state.json` schema and `status.txt` format;
 - internal source modules and source-level exports.
@@ -183,9 +185,9 @@ This project ships the OpenCode TUI sidebar plugin from `src/tui.tsx`. The TUI b
 Package entrypoints:
 
 ```txt
-opencode-subagent-statusline          -> TUI plugin
-opencode-subagent-statusline/tui      -> TUI plugin
-opencode-subagent-statusline/runtime  -> experimental/diagnostic runtime mode
+@ookam147/opencode-subagent-statusline          -> TUI plugin
+@ookam147/opencode-subagent-statusline/tui      -> TUI plugin
+@ookam147/opencode-subagent-statusline/runtime  -> experimental/diagnostic runtime mode
 ```
 
 Useful commands:
@@ -222,10 +224,10 @@ Release maintainers should keep the repository `NPM_TOKEN` secret restricted, re
 
 ## Community and releases
 
-- [npm package](https://www.npmjs.com/package/opencode-subagent-statusline)
-- [GitHub repository](https://github.com/Joaquinvesapa/sub-agent-statusline)
-- [Releases](https://github.com/Joaquinvesapa/sub-agent-statusline/releases)
-- [Issues](https://github.com/Joaquinvesapa/sub-agent-statusline/issues)
+- [npm package](https://www.npmjs.com/package/@ookam147/opencode-subagent-statusline)
+- [GitHub repository](https://github.com/ookam147/sub-agent-statusline)
+- [Releases](https://github.com/ookam147/sub-agent-statusline/releases)
+- [Issues](https://github.com/ookam147/sub-agent-statusline/issues)
 - [Contributing](CONTRIBUTING.md)
 - [Code of Conduct](CODE_OF_CONDUCT.md)
 - [Security policy](SECURITY.md)

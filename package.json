@@ -1,11 +1,11 @@
 {
-  "name": "opencode-subagent-statusline",
-  "version": "0.7.0",
+  "name": "@ookam147/opencode-subagent-statusline",
+  "version": "1.3.1",
   "description": "OpenCode plugin that exposes subagent session statusline state",
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Joaquinvesapa/sub-agent-statusline"
+    "url": "https://github.com/ookam147/sub-agent-statusline"
   },
   "packageManager": "pnpm@11.2.2",
   "engines": {

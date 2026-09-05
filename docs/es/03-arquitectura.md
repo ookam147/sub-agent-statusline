@@ -44,8 +44,8 @@ Fuente: `src/tui.tsx`
 Es el entrypoint principal del paquete:
 
 ```txt
-opencode-subagent-statusline
-opencode-subagent-statusline/tui
+@ookam147/opencode-subagent-statusline
+@ookam147/opencode-subagent-statusline/tui
 ```
 
 Responsabilidades principales:
@@ -67,7 +67,7 @@ Fuente: `src/index.ts`
 Se publica como:
 
 ```txt
-opencode-subagent-statusline/runtime
+@ookam147/opencode-subagent-statusline/runtime
 ```
 
 Este modo es más bajo nivel. No renderiza la sidebar TUI. En cambio:

@@ -17,7 +17,7 @@ Contenido mínimo:
 ```json
 {
   "$schema": "https://opencode.ai/tui.json",
-  "plugin": ["opencode-subagent-statusline"]
+  "plugin": ["@ookam147/opencode-subagent-statusline"]
 }
 ```
 
@@ -184,7 +184,7 @@ No conviene usar valores agresivos salvo para diagnóstico. Un umbral muy bajo p
 El entrypoint runtime es:
 
 ```txt
-opencode-subagent-statusline/runtime
+@ookam147/opencode-subagent-statusline/runtime
 ```
 
 Exporta `SubagentStatusline` desde `src/index.ts`.

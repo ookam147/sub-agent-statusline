@@ -1,6 +1,6 @@
 # Visión general
 
-`opencode-subagent-statusline` es un plugin TUI para OpenCode que muestra actividad de subagentes dentro de la interfaz: subagentes corriendo, finalizados, fallidos, duración y uso de tokens/contexto cuando OpenCode expone esa información.
+`@ookam147/opencode-subagent-statusline` es un plugin TUI para OpenCode que muestra actividad de subagentes dentro de la interfaz: subagentes corriendo, finalizados, fallidos, duración y uso de tokens/contexto cuando OpenCode expone esa información.
 
 La idea central es simple:
 
@@ -39,9 +39,9 @@ El paquete publica dos entrypoints:
 
 | Entrypoint                             | Fuente         | Uso principal                                                                            |
 | -------------------------------------- | -------------- | ---------------------------------------------------------------------------------------- |
-| `opencode-subagent-statusline`         | `src/tui.tsx`  | Plugin TUI principal. Es el camino recomendado para usuarios.                            |
-| `opencode-subagent-statusline/tui`     | `src/tui.tsx`  | Alias explícito del plugin TUI.                                                          |
-| `opencode-subagent-statusline/runtime` | `src/index.ts` | Plugin runtime/file-based avanzado. Procesa eventos y escribe `state.json`/`status.txt`. |
+| `@ookam147/opencode-subagent-statusline`         | `src/tui.tsx`  | Plugin TUI principal. Es el camino recomendado para usuarios.                            |
+| `@ookam147/opencode-subagent-statusline/tui`     | `src/tui.tsx`  | Alias explícito del plugin TUI.                                                          |
+| `@ookam147/opencode-subagent-statusline/runtime` | `src/index.ts` | Plugin runtime/file-based avanzado. Procesa eventos y escribe `state.json`/`status.txt`. |
 
 El README actual se concentra en el modo TUI, que es la experiencia principal del paquete.
 

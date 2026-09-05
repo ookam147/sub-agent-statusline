@@ -1,6 +1,6 @@
 # Installation and usage
 
-`opencode-subagent-statusline` is installed as an OpenCode TUI plugin. Once active, it adds a subagent section to the sidebar and a compact summary on the home screen when there is activity.
+`@ookam147/opencode-subagent-statusline` is installed as an OpenCode TUI plugin. Once active, it adds a subagent section to the sidebar and a compact summary on the home screen when there is activity.
 
 ## Quick install
 
@@ -9,7 +9,7 @@ Add the package to OpenCode's TUI configuration file:
 ```json
 {
   "$schema": "https://opencode.ai/tui.json",
-  "plugin": ["opencode-subagent-statusline"]
+  "plugin": ["@ookam147/opencode-subagent-statusline"]
 }
 ```
 
