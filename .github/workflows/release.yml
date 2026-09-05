@@ -64,7 +64,9 @@ jobs:
             exit 1
           fi
 
-          git fetch origin main --tags
+          # The checkout already contains the pushed annotated tag. Fetch only
+          # main so Git does not try to clobber that local tag during preflight.
+          git fetch --no-tags origin main
           if [[ "$(git cat-file -t "refs/tags/$tag")" != tag ]]; then
             printf 'Refusing lightweight tag %s. Release tags must be annotated.\n' "$tag" >&2
             exit 1
