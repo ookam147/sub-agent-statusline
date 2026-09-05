@@ -64,15 +64,17 @@ jobs:
             exit 1
           fi
 
-          # The checkout already contains the pushed annotated tag. Fetch only
-          # main so Git does not try to clobber that local tag during preflight.
-          git fetch --no-tags origin main
-          if [[ "$(git cat-file -t "refs/tags/$tag")" != tag ]]; then
+          # Checkout may materialize the triggering tag as a commit ref. Fetch
+          # the remote tag into an isolated ref so we can verify its annotation
+          # without clobbering checkout's local tag representation.
+          remote_tag_ref="refs/remotes/origin/tags/$tag"
+          git fetch --no-tags origin main "refs/tags/$tag:$remote_tag_ref"
+          if [[ "$(git cat-file -t "$remote_tag_ref")" != tag ]]; then
             printf 'Refusing lightweight tag %s. Release tags must be annotated.\n' "$tag" >&2
             exit 1
           fi
 
-          tag_sha="$(git rev-parse "refs/tags/$tag^{commit}")"
+          tag_sha="$(git rev-parse "$remote_tag_ref^{commit}")"
           main_sha="$(git rev-parse origin/main)"
           if [[ "$tag_sha" != "$main_sha" ]]; then
             printf 'Refusing stale tag %s at %s: current origin/main is %s.\n' \
